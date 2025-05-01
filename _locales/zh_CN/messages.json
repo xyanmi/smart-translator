@@ -1,0 +1,38 @@
+{
+  "appName": {
+    "message": "智能翻译助手",
+    "description": "扩展的名称"
+  },
+  "appDesc": {
+    "message": "一个强大的网页翻译工具，支持划词翻译、快捷键翻译等功能",
+    "description": "扩展的描述"
+  },
+  "translateNow": {
+    "message": "立即翻译",
+    "description": "立即翻译按钮"
+  },
+  "settings": {
+    "message": "设置",
+    "description": "设置按钮"
+  },
+  "apiSettings": {
+    "message": "API设置",
+    "description": "API设置标题"
+  },
+  "translationMode": {
+    "message": "翻译模式",
+    "description": "翻译模式标题"
+  },
+  "instantTranslation": {
+    "message": "即时翻译",
+    "description": "即时翻译模式"
+  },
+  "keyboardShortcut": {
+    "message": "快捷键翻译",
+    "description": "快捷键翻译模式"
+  },
+  "copyThenTranslate": {
+    "message": "复制后翻译",
+    "description": "复制后翻译模式"
+  }
+}

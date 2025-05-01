@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能翻译助手</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Smart Translator</h1>
+    
+    <div class="section">
+      <h2 class="section-title">翻译模式</h2>
+      <div class="option-group">
+        <label>
+          <input type="radio" name="translateMode" value="instant"> 即时翻译
+        </label>
+        <label>
+          <input type="radio" name="translateMode" value="manual"> 手动触发
+        </label>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">触发方式</h2>
+      <div class="option-group">
+        <label>
+          <input type="checkbox" id="triggerF1"> F1键
+        </label>
+        <label>
+          <input type="checkbox" id="triggerCopy"> 复制时
+        </label>
+        <label>
+          <input type="checkbox" id="triggerCustom"> 自定义快捷键
+        </label>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">翻译API</h2>
+      <div class="option-group">
+        <select id="apiType">
+          <option value="google">Google翻译 (免费)</option>
+          <option value="bing">Bing翻译</option>
+          <option value="deepl">DeepL翻译</option>
+          <option value="openai">OpenAI (GPT)</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="gemini">Gemini</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <a href="../settings/settings.html" target="_blank" class="settings-link">高级设置</a>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

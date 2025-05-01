@@ -1,0 +1,53 @@
+{
+    "manifest_version": 3,
+    "name": "Smart Translate",
+    "version": "1.0.0",
+    "description": "一个网页翻译工具，支持划词翻译、快捷键翻译等功能",
+    "default_locale": "zh_CN",
+    "permissions": [
+        "storage",
+        "contextMenus",
+        "activeTab",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_popup": "src/popup/popup.html",
+        "default_icon": {
+            "16": "assets/icons/icon16.png",
+            "48": "assets/icons/icon48.png",
+            "128": "assets/icons/icon128.png"
+        }
+    },
+    "background": {
+        "service_worker": "src/background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/content.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [],
+            "matches": ["<all_urls>"],
+            "use_dynamic_url": true
+        }
+    ],
+    "icons": {
+        "16": "assets/icons/icon16.png",
+        "48": "assets/icons/icon48.png",
+        "128": "assets/icons/icon128.png"
+    },
+    "options_page": "src/settings/settings.html"
+}

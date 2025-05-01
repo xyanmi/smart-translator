@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Translator - Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="title">Smart Translator - Settings</h1>
+
+    <div class="section">
+      <h2 class="section-title">翻译模式</h2>
+      <div class="option-group">
+        <label>
+          <input type="radio" name="translate-mode" value="instant">
+          即时翻译
+          <div class="description">选中文本后立即显示翻译结果</div>
+        </label>
+        <label>
+          <input type="radio" name="translate-mode" value="manual">
+          手动翻译
+          <div class="description">选中文本后需要手动触发翻译</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">触发方式</h2>
+      <div class="option-group">
+        <label>
+          <input type="checkbox" id="enable-copy">
+          复制后翻译
+          <div class="description">选中并复制文本后自动翻译</div>
+        </label>
+        <label>
+          <input type="checkbox" id="enable-f1">
+          按F1键翻译
+          <div class="description">选中文本后按F1键翻译</div>
+        </label>
+        <label>
+          <input type="checkbox" id="enable-custom-key">
+          自定义快捷键
+          <div class="description">选中文本后按自定义快捷键翻译</div>
+        </label>
+      </div>
+
+      <div id="custom-key-settings">
+        <div class="shortcut-row">
+          <div class="shortcut-group">
+            <span>修饰键：</span>
+            <select id="custom-key">
+              <option value="alt">Alt</option>
+              <option value="ctrl">Ctrl</option>
+              <option value="shift">Shift</option>
+            </select>
+          </div>
+          <div class="shortcut-group">
+            <span>快捷键：</span>
+            <div class="key-capture-container">
+              <input type="text" id="key-display" readonly value="T">
+              <input type="hidden" id="custom-key-code" value="84">
+            </div>
+            <!-- <div class="description">点击输入框并按下想要设置的按键（默认设置：T）</div> -->
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">翻译API</h2>
+      <div class="option-group">
+        <label>
+          <span>选择API:</span>
+          <select id="api-select">
+            <option value="google">Google翻译 (免费)</option>
+            <option value="bing">Bing翻译</option>
+            <option value="deepl">DeepL翻译</option>
+            <option value="openai">OpenAI (GPT)</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="gemini">Gemini</option>
+            <option value="custom">自定义API</option>
+          </select>
+        </label>
+
+        <div class="api-settings">
+          <!-- Google API设置 -->
+          <div id="google-settings" class="api-setting">
+            <h3>Google翻译设置</h3>
+            <p>Google翻译使用公共API，无需设置API密钥。</p>
+          </div>
+
+          <!-- Bing API设置 -->
+          <div id="bing-settings" class="api-setting">
+            <h3>Bing翻译设置</h3>
+            <label>
+              <span>API密钥:</span>
+              <input type="text" id="bing-api-key" placeholder="输入您的Bing翻译API密钥">
+            </label>
+            <div class="description">
+              <p>如何获取Bing翻译API密钥:</p>
+              <ol>
+                <li>访问 <a href="https://www.microsoft.com/en-us/translator/business/translator-api/"
+                    target="_blank">Microsoft Translator API</a></li>
+                <li>注册或登录Microsoft Azure账号</li>
+                <li>创建一个Translator资源</li>
+                <li>在资源管理页面获取API密钥</li>
+              </ol>
+            </div>
+            <button class="test-api-btn" data-api="bing">测试API</button>
+
+          </div>
+
+          <!-- DeepL API设置 -->
+          <div id="deepl-settings" class="api-setting">
+            <h3>DeepL翻译设置</h3>
+            <label>
+              <span>API密钥:</span>
+              <input type="text" id="deepl-api-key" placeholder="输入您的DeepL API密钥">
+            </label>
+            <div class="description">
+              <p>如何获取DeepL API密钥:</p>
+              <ol>
+                <li>访问 <a href="https://www.deepl.com/pro-api" target="_blank">DeepL API</a></li>
+                <li>注册或登录DeepL账号</li>
+                <li>选择API计划（有免费选项）</li>
+                <li>在账户设置中获取API密钥</li>
+              </ol>
+            </div>
+            <button class="test-api-btn" data-api="deepl">测试API</button>
+          </div>
+
+          <!-- OpenAI API设置 -->
+          <!-- 在每个API设置区域添加测试按钮 -->
+          <div id="openai-settings" class="api-setting">
+            <h3>OpenAI设置</h3>
+            <label>
+              <span>API密钥:</span>
+              <input type="text" id="openai-api-key" placeholder="输入您的OpenAI API密钥">
+            </label>
+            <label style="margin-top: 10px;">
+              <span>模型:</span>
+              <select id="openai-model">
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="gpt-4">GPT-4</option>
+                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+              </select>
+            </label>
+            <div class="description">
+              <p>如何获取OpenAI API密钥:</p>
+              <ol>
+                <li>访问 <a href="https://platform.openai.com/" target="_blank">OpenAI Platform</a></li>
+                <li>注册或登录OpenAI账号</li>
+                <li>在个人设置中创建API密钥</li>
+              </ol>
+            </div>
+            <button class="test-api-btn" data-api="openai">测试API</button>
+          </div>
+
+          <!-- DeepSeek API设置 -->
+          <div id="deepseek-settings" class="api-setting">
+            <h3>DeepSeek翻译设置</h3>
+            <label>
+              <span>API密钥:</span>
+              <input type="text" id="deepseek-api-key" placeholder="输入您的DeepSeek API密钥">
+            </label>
+            <label style="margin-top: 10px;">
+              <span>模型:</span>
+              <select id="deepseek-model">
+                <option value="deepseek-chat">DeepSeek Chat</option>
+                <option value="deepseek-coder">DeepSeek Coder</option>
+              </select>
+            </label>
+            <div class="description">
+              <p>如何获取DeepSeek API密钥:</p>
+              <ol>
+                <li>访问 <a href="https://platform.deepseek.com/" target="_blank">DeepSeek Platform</a></li>
+                <li>注册或登录DeepSeek账号</li>
+                <li>在账户设置中创建API密钥</li>
+              </ol>
+            </div>
+            <button class="test-api-btn" data-api="deepseek">测试API</button>
+          </div>
+
+          <!-- Gemini API设置 -->
+          <div id="gemini-settings" class="api-setting">
+            <h3>Gemini翻译设置</h3>
+            <label>
+              <span>API密钥:</span>
+              <input type="text" id="gemini-api-key" placeholder="输入您的Google AI Studio API密钥">
+            </label>
+            <label style="margin-top: 10px;">
+              <span>模型:</span>
+              <select id="gemini-model">
+                <option value="gemini-pro">Gemini Pro</option>
+                <option value="gemini-pro-vision">Gemini Pro Vision</option>
+              </select>
+            </label>
+            <div class="description">
+              <p>如何获取Gemini API密钥:</p>
+              <ol>
+                <li>访问 <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
+                <li>使用Google账号登录</li>
+                <li>创建新的API密钥</li>
+              </ol>
+            </div>
+            <button class="test-api-btn" data-api="gemini">测试API</button>
+          </div>
+
+          <!-- 自定义API设置 -->
+          <!-- 在API设置部分添加 -->
+          <div id="custom-settings" class="api-setting">
+            <h3>自定义API设置</h3>
+
+            <div id="custom-apis-container">
+              <!-- 这里将动态生成自定义API设置表单 -->
+            </div>
+            <button class="test-api-btn" data-api="custom">测试API</button>
+
+            <button id="add-api-btn" class="secondary-btn" style="margin-top: 15px;">
+              <span>+ 添加新API</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">显示设置</h2>
+      <div class="option-group">
+        <label>
+          <span>显示位置:</span>
+          <select id="display-position">
+            <option value="near">靠近选中文本</option>
+            <option value="fixed">固定位置</option>
+            <option value="tooltip">工具提示样式</option>
+          </select>
+        </label>
+        <label style="margin-top: 10px;">
+          <span>自动关闭时间 (秒):</span>
+          <input type="number" id="auto-close" min="0" max="60" value="0">
+          <div class="description">0 = 不自动关闭</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section section">
+      <h3>特殊网站设置</h3>
+      <p>在以下网站上将使用特殊处理方式进行翻译（有一些网站不支持翻译模式，可以尝试这个功能）：</p>
+      
+      <div id="special-sites-list">
+        <!-- 特殊网站列表将在这里动态生成 -->
+      </div>
+      
+      <div class="form-group" >
+        <input type="text" id="new-special-site" placeholder="输入网站域名，如 example.com">
+        <button id="add-special-site" style="margin-top: 10px;">添加</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button id="reset-btn">恢复默认设置</button>
+      <button id="save-btn">保存设置</button>
+    </div>
+  </div>
+
+  <!-- 特殊网站设置部分 -->
+  
+
+  <script src="settings.js"></script>
+</body>
+
+</html>

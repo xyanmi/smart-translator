@@ -1,0 +1,38 @@
+{
+  "appName": {
+    "message": "Smart Translator",
+    "description": "Name of the extension"
+  },
+  "appDesc": {
+    "message": "A powerful web translation tool supporting text selection translation, shortcut translation and more",
+    "description": "Description of the extension"
+  },
+  "translateNow": {
+    "message": "Translate Now",
+    "description": "Translate now button"
+  },
+  "settings": {
+    "message": "Settings",
+    "description": "Settings button"
+  },
+  "apiSettings": {
+    "message": "API Settings",
+    "description": "API Settings title"
+  },
+  "translationMode": {
+    "message": "Translation Mode",
+    "description": "Translation mode title"
+  },
+  "instantTranslation": {
+    "message": "Instant Translation",
+    "description": "Instant translation mode"
+  },
+  "keyboardShortcut": {
+    "message": "Keyboard Shortcut",
+    "description": "Keyboard shortcut mode"
+  },
+  "copyThenTranslate": {
+    "message": "Copy Then Translate",
+    "description": "Copy then translate mode"
+  }
+}
