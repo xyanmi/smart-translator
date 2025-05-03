@@ -414,11 +414,11 @@ function translateWithDeepL(text, sourceLang, targetLang, apiKey, callback) {
 
 
 /**
- * OpenAI Translation
+ * OpenRouter Translation
  * @param {string} text - Text to translate
  * @param {string} sourceLang - Source language code
  * @param {string} targetLang - Target language code
- * @param {object} settings - OpenAI API settings
+ * @param {object} settings - OpenRouter API settings
  * @param {function} callback - Callback function to handle result
  */
 function translateWithOpenAI(text, sourceLang, targetLang, settings, callback) {
@@ -427,7 +427,8 @@ function translateWithOpenAI(text, sourceLang, targetLang, settings, callback) {
     return;
   }
   
-  const url = 'https://api.openai.com/v1/chat/completions';
+  // const url = 'https://api.openai.com/v1/chat/completions';
+  const url = 'https://openrouter.ai/api/v1/chat/completions'
   const targetLanguage = targetLang || 'Chinese';
   
   fetch(url, {
@@ -440,12 +441,8 @@ function translateWithOpenAI(text, sourceLang, targetLang, settings, callback) {
       model: settings.model,
       messages: [
         {
-          role: 'system',
-          content: `You are a translation assistant. Please translate the user's text to ${targetLanguage}. Only return the translation result without any explanation or additional content.`
-        },
-        {
           role: 'user',
-          content: text
+          content:`你是一名翻译助理。请将下面的文本翻译为 ${targetLanguage}. 请只输出翻译结果，不要添加任何其他内容。我的文本是：\n ${text}`
         }
       ],
       temperature: 0.3
@@ -454,14 +451,14 @@ function translateWithOpenAI(text, sourceLang, targetLang, settings, callback) {
     .then(response => response.json())
     .then(data => {
       if (data && data.choices && data.choices[0] && data.choices[0].message) {
-        callback({ success: true, translatedText: data.choices[0].message.content.trim() });
+        callback({ success: true, translatedText: data.choices[0].message.content.trim(), data: data });
       } else {
         callback({ success: false, error: data.error ? data.error.message : 'Invalid translation result format', data: data });
       }
     })
     .catch(error => {
       console.error('OpenAI translation error:', error);
-      callback({ success: false, error: 'Translation request failed' });
+      callback({ success: false, error: 'Translation request failed', data: error });
     });
 }
 

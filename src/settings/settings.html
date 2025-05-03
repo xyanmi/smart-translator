@@ -79,7 +79,7 @@
             <option value="google">Google翻译 (免费)</option>
             <option value="bing">Bing翻译</option>
             <option value="deepl">DeepL翻译</option>
-            <option value="openai">OpenAI (GPT)</option>
+            <option value="openai">OpenRouter</option>
             <option value="deepseek">DeepSeek</option>
             <option value="gemini">Gemini</option>
             <option value="custom">自定义API</option>
@@ -136,24 +136,25 @@
           <!-- OpenAI API设置 -->
           <!-- 在每个API设置区域添加测试按钮 -->
           <div id="openai-settings" class="api-setting">
-            <h3>OpenAI设置</h3>
+            <h3>OpenRouter 设置</h3>
             <label>
               <span>API密钥:</span>
               <input type="text" id="openai-api-key" placeholder="输入您的OpenAI API密钥">
             </label>
             <label style="margin-top: 10px;">
               <span>模型:</span>
-              <select id="openai-model">
+              <!-- <select id="openai-model">
                 <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                 <option value="gpt-4">GPT-4</option>
                 <option value="gpt-4-turbo">GPT-4 Turbo</option>
-              </select>
+              </select> -->
+              <input type="text" id="openai-model" value="">
             </label>
             <div class="description">
-              <p>如何获取OpenAI API密钥:</p>
+              <p>如何获取OpenRouter API密钥:</p>
               <ol>
-                <li>访问 <a href="https://platform.openai.com/" target="_blank">OpenAI Platform</a></li>
-                <li>注册或登录OpenAI账号</li>
+                <li>访问 <a href="https://openrouter.ai/" target="_blank">OpenRouter Platform</a></li>
+                <li>注册或登录OpenRouter账号</li>
                 <li>在个人设置中创建API密钥</li>
               </ol>
             </div>
