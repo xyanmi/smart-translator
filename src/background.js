@@ -1,76 +1,96 @@
+importScripts('shared/translation-api.js');
+
+const {
+  createDefaultSettings,
+  normalizeTranslationSettings,
+  translateByProvider,
+  applySecretsToSettings,
+  stripSecretsFromSettings,
+  extractSecretsFromSettings,
+  createDefaultSecrets
+} = SmartTranslatorApi;
+
+function loadMergedSettings(callback) {
+  chrome.storage.sync.get('translationSettings', function(syncData) {
+    chrome.storage.local.get('translationSecrets', function(localData) {
+      const syncSettings = normalizeTranslationSettings(syncData.translationSettings);
+      const localSecrets = localData.translationSecrets || createDefaultSecrets();
+      const migratedSecrets = extractSecretsFromSettings(syncSettings);
+      const mergedSecrets = applySecretsToSettings(
+        createDefaultSettings(),
+        localSecrets
+      );
+      const normalizedSecrets = extractSecretsFromSettings(
+        applySecretsToSettings(syncSettings, localSecrets)
+      );
+
+      const nextSecrets = {
+        api: {
+          bing: {
+            apiKey: migratedSecrets.api.bing.apiKey || mergedSecrets.api.bing.apiKey || ''
+          },
+          deepl: {
+            apiKey: migratedSecrets.api.deepl.apiKey || mergedSecrets.api.deepl.apiKey || ''
+          },
+          openai: {
+            apiKey: migratedSecrets.api.openai.apiKey || mergedSecrets.api.openai.apiKey || ''
+          },
+          deepseek: {
+            apiKey: migratedSecrets.api.deepseek.apiKey || mergedSecrets.api.deepseek.apiKey || ''
+          },
+          gemini: {
+            apiKey: migratedSecrets.api.gemini.apiKey || mergedSecrets.api.gemini.apiKey || ''
+          }
+        },
+        customApiKeys: {
+          ...localSecrets.customApiKeys,
+          ...migratedSecrets.customApiKeys,
+          ...normalizedSecrets.customApiKeys
+        }
+      };
+
+      const sanitizedSettings = stripSecretsFromSettings(syncSettings);
+
+      chrome.storage.local.set({ translationSecrets: nextSecrets }, function() {
+        chrome.storage.sync.set({ translationSettings: sanitizedSettings }, function() {
+          callback(applySecretsToSettings(sanitizedSettings, nextSecrets));
+        });
+      });
+    });
+  });
+}
+
 /**
  * Initialize settings when extension is installed
  */
 chrome.runtime.onInstalled.addListener(function() {
-  // Default settings configuration
-  const defaultSettings = {
-    translateMode: 'instant',
-    triggerMethods: {
-      copy: false,
-      f1: true,
-      customKey: false
-    },
-    customKey: {
-      modifier: 'alt',
-      keyCode: 84 // T key
-    },
-    api: {
-      type: 'google',
-      google: {},
-      bing: {
-        apiKey: ''
-      },
-      deepl: {
-        apiKey: ''
-      },
-      openai: {
-        apiKey: '',
-        model: 'gpt-3.5-turbo'
-      },
-      deepseek: {
-        apiKey: '',
-        model: 'deepseek-chat'
-      },
-      gemini: {
-        apiKey: '',
-        model: 'gemini'
-      },
-      customApis: [
-        {
-          id: 'custom1',
-          name: 'Custom API 1',
-          url: '',
-          apiKey: '',
-          method: 'POST'
-        }
-      ]
-    },
-    display: {
-      position: 'near',
-      autoClose: 0
-    },
-    // Special websites that require custom handling
-    specialSites: [
-      'arxiv.org',
-      'pdf',
-      'scholar.google.com',
-      'github.com',
-      'gitlab.com'
-    ]
-  };
+  const defaultSettings = createDefaultSettings();
 
   // Save default settings if not already set
   chrome.storage.sync.get('translationSettings', function(data) {
     if (!data.translationSettings) {
-      chrome.storage.sync.set({ translationSettings: defaultSettings });
+      chrome.storage.sync.set({ translationSettings: stripSecretsFromSettings(defaultSettings) });
+    } else {
+      const sanitizedSettings = stripSecretsFromSettings(data.translationSettings);
+      if (JSON.stringify(sanitizedSettings) !== JSON.stringify(normalizeTranslationSettings(data.translationSettings))) {
+        chrome.storage.sync.set({ translationSettings: sanitizedSettings });
+      }
+    }
+  });
+
+  chrome.storage.local.get('translationSecrets', function(data) {
+    if (!data.translationSecrets) {
+      chrome.storage.local.set({ translationSecrets: createDefaultSecrets() });
     }
   });
 
   // Create context menu for translation
-  chrome.contextMenus.create({
-    id: 'translate-selection',
-    title: 'Translate Selected Text',
-    contexts: ['selection']
+  chrome.contextMenus.removeAll(function() {
+    chrome.contextMenus.create({
+      id: 'translate-selection',
+      title: 'Translate Selected Text',
+      contexts: ['selection']
+    });
   });
 });
 
@@ -218,62 +238,25 @@ function sendTranslationMessage(tabId, text) {
  */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'getSettings') {
-    chrome.storage.sync.get('translationSettings', function(data) {
-      sendResponse(data.translationSettings);
+    loadMergedSettings(function(merged) {
+      sendResponse(merged);
     });
     return true; // Keep message channel open for async response
   } else if (request.action === 'translate') {
-    // Get settings and call appropriate translation API
-    chrome.storage.sync.get('translationSettings', function(data) {
-      const settings = data.translationSettings;
+    loadMergedSettings(function(settings) {
       const apiType = request.test ? request.apiType : settings.api.type;
-      console.log(apiType);
-      
-      // Call different translation functions based on API type
-      switch (apiType) {
-        case 'google':
-          translateWithGoogle(request.text, request.sourceLang, request.targetLang, function(result) {
-            sendResponse(result);
-          });
-          break;
-        case 'bing':
-          translateWithBing(request.text, request.sourceLang, request.targetLang, settings.api.bing.apiKey, function(result) {
-            sendResponse(result);
-          });
-          break;
-        case 'deepl':
-          translateWithDeepL(request.text, request.sourceLang, request.targetLang, settings.api.deepl.apiKey, function(result) {
-            sendResponse(result);
-          });
-          break;
-        case 'openai':
-          translateWithOpenAI(request.text, request.sourceLang, request.targetLang, settings.api.openai, function(result) {
-            sendResponse(result);
-          });
-          break;
-        case 'deepseek':
-          translateWithDeepSeek(request.text, request.sourceLang, request.targetLang, settings.api.deepseek, function(result) {
-            sendResponse(result);
-          });
-          break;
-        case 'gemini':
-          translateWithGemini(request.text, request.sourceLang, request.targetLang, settings.api.gemini, function(result) {
-            sendResponse(result);
-          });
-          break;
-        default:
-          // Handle custom APIs
-          const customApi = settings.api.customApis.find(api => api.id === apiType);
-          console.log(settings.api);
-          if (customApi) {
-            translateWithCustomAPI(request.text, request.sourceLang, request.targetLang, customApi, function(result) {
-              sendResponse(result);
-            });
-          } else {
-            sendResponse({ success: false, error: 'API settings not found: ' + apiType });
-          }
-          break;
-      }
+      const customApiId = request.customApiId || settings.api.customSelectedId;
+
+      translateByProvider(
+        apiType,
+        {
+          text: request.text,
+          sourceLang: request.sourceLang,
+          targetLang: request.targetLang,
+          customApiId: customApiId
+        },
+        settings
+      ).then(sendResponse);
     });
     return true; // Keep message channel open for async response
   }

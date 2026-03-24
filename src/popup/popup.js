@@ -13,7 +13,7 @@ const apiTypeSelect = document.getElementById('apiType');
 function loadSettings() {
   chrome.storage.sync.get('translationSettings', function(data) {
     if (data.translationSettings) {
-      const settings = data.translationSettings;
+      const settings = SmartTranslatorApi.normalizeTranslationSettings(data.translationSettings);
       
       // Set translation mode
       const modeRadio = document.querySelector(`input[name="translateMode"][value="${settings.translateMode}"]`);
@@ -53,7 +53,7 @@ function loadSettings() {
  */
 function saveSettings() {
   chrome.storage.sync.get('translationSettings', function(data) {
-    const settings = data.translationSettings || {};
+    const settings = SmartTranslatorApi.normalizeTranslationSettings(data.translationSettings);
     console.log('Settings changed');
     
     // Get translation mode

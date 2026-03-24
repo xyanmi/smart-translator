@@ -1,0 +1,8 @@
+{
+  "name": "smart-translator",
+  "version": "1.1.1",
+  "private": true,
+  "scripts": {
+    "test": "node -e \"const fs=require('fs');const path=require('path');const vm=require('vm');const Module=require('module');const root=process.cwd();const filename=path.join(root,'tests','translation-api.test.js');const code=fs.readFileSync(filename,'utf8');const mod={exports:{}};const script=vm.runInThisContext(Module.wrap(code),{filename});script(mod.exports,Module.createRequire(filename),mod,filename,path.dirname(filename));\""
+  }
+}

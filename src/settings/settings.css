@@ -58,7 +58,10 @@ body {
   font-size: 10px;
 }
 
-select, input[type="text"] {
+select,
+input[type="text"],
+input[type="password"],
+input[type="number"] {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -66,6 +69,13 @@ select, input[type="text"] {
   background-color: white;
   font-size: 14px;
   box-sizing: border-box;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="number"],
+select {
+  min-height: 40px;
 }
 
 .api-settings {
@@ -165,16 +175,29 @@ input:disabled, select:disabled, textarea:disabled {
 }
 
 .custom-api-actions button {
-  background: none;
-  border: none;
+  background-color: #f1f3f4;
+  border: 1px solid #dadce0;
   cursor: pointer;
-  font-size: 16px;
-  padding: 2px 5px;
-  border-radius: 3px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #202124;
+  min-height: 34px;
+  line-height: 1;
 }
 
 .custom-api-actions button:hover {
-  background-color: #e0e0e0;
+  background-color: #e8eaed;
+}
+
+.custom-api-actions .danger-btn {
+  background-color: #fdecea;
+  border-color: #f5c6cb;
+  color: #b71c1c;
+}
+
+.custom-api-actions .danger-btn:hover {
+  background-color: #fbd8d8;
 }
 
 .custom-api-actions button:disabled {
@@ -195,6 +218,13 @@ input:disabled, select:disabled, textarea:disabled {
 
 .secondary-btn:hover {
   background-color: #616161;
+}
+
+.footer .secondary-btn,
+.footer button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 8px;
 }
 
 .custom-api-content textarea {
@@ -263,12 +293,32 @@ input:disabled, select:disabled, textarea:disabled {
 
 .test-api-btn {
   margin-top: 10px;
-  padding: 5px 10px;
+  padding: 8px 12px;
   background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  min-height: 40px;
+  line-height: 1;
+}
+
+#test-active-custom-api,
+#add-api-btn {
+  min-height: 44px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+#add-api-btn {
+  margin-top: 12px;
+}
+
+#test-active-custom-api {
+  margin-top: 10px;
 }
 
 .test-api-btn:hover {
@@ -281,13 +331,14 @@ input:disabled, select:disabled, textarea:disabled {
 }
 
 #key-display {
-  width: 100px;
-  padding: 8px;
+  width: 120px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   background-color: #ffffff;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 #key-display:hover {
@@ -299,7 +350,7 @@ input:disabled, select:disabled, textarea:disabled {
   outline: none;
   border-color: #4a90e2;
   box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-  font-size: 12px;
+  font-size: 15px;
 }
 
 #key-display::placeholder {
@@ -332,6 +383,35 @@ input:disabled, select:disabled, textarea:disabled {
 #custom-key {
   width: auto;
   min-width: 80px;
+}
+
+.api-setting input[type="password"],
+.api-setting input[type="text"],
+.api-setting input[type="number"],
+.custom-api-content input[type="password"],
+.custom-api-content input[type="text"],
+.custom-api-content input[type="number"],
+.custom-api-content select {
+  margin-bottom: 4px;
+}
+
+.custom-api-content label {
+  margin-bottom: 12px;
+}
+
+.custom-api-content .secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-api-item .custom-api-content {
+  display: grid;
+  gap: 8px;
+}
+
+.custom-api-content textarea {
+  min-height: 88px;
 }
 
 #custom-key-settings {

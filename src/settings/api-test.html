@@ -68,6 +68,14 @@
             <h1>API测试</h1>
             <button class="back-btn" onclick="window.location.href='settings.html'">返回设置</button>
         </div>
+
+        <div class="test-content" style="margin-bottom: 20px;">
+            <label>
+                <span>目标 API:</span>
+                <select id="api-selector" style="margin-top: 8px;"></select>
+            </label>
+            <p id="api-summary" style="margin-top: 10px; color: #666;"></p>
+        </div>
         
         <div class="test-container">
             <div class="test-left">
@@ -90,6 +98,7 @@
         </div>
     </div>
     
-    <script src="api-test.js"></script>
+    <script src="../shared/translation-api.js"></script>
+    <script src="api-test-app.js"></script>
 </body>
 </html>

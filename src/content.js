@@ -1,15 +1,24 @@
 let translationDiv = null;
 let settings = null;
 let isTranslating = false;
+let selectionTracker = null;
+let hasInitialized = false;
 
 /**
  * Initialize the translation functionality
  * Fetches settings and sets up event listeners
  */
 function initialize() {
+  if (hasInitialized) {
+    return;
+  }
+
+  hasInitialized = true;
+
   // Get settings from background script
   chrome.runtime.sendMessage({ action: 'getSettings' }, function(response) {
     settings = response;
+    selectionTracker = SmartTranslatorSelection.createSelectionTracker(document);
     setupEventListeners();
   });
 }
@@ -20,6 +29,8 @@ function initialize() {
 function setupEventListeners() {
   // Listen for mouse selection events
   document.addEventListener('mouseup', handleMouseUp);
+  document.addEventListener('pointerup', handleMouseUp);
+  document.addEventListener('selectionchange', handleSelectionChange);
   
   // Listen for keyboard events
   document.addEventListener('keydown', handleKeyDown);
@@ -42,7 +53,7 @@ function setupEventListeners() {
  * @param {MouseEvent} event - The mouse event object
  */
 function handleMouseUp(event) {
-  const selectedText = window.getSelection().toString().trim();
+  const selectedText = getSelectedTextForTrigger('mouseup');
   
   // Return if no text is selected or translation is in progress
   if (!selectedText || isTranslating) return;
@@ -58,7 +69,7 @@ function handleMouseUp(event) {
  * @param {KeyboardEvent} event - The keyboard event object
  */
 function handleKeyDown(event) {
-  const selectedText = window.getSelection().toString().trim();
+  const selectedText = getSelectedTextForTrigger('keydown');
   
   // Return if no text is selected
   if (!selectedText) return;
@@ -91,7 +102,7 @@ function handleKeyDown(event) {
  */
 function handleCopy(event) {
   if (settings && settings.triggerMethods && settings.triggerMethods.copy) {
-    const selectedText = window.getSelection().toString().trim();
+    const selectedText = getSelectedTextForTrigger('copy');
     if (selectedText) {
       // Don't prevent default copy behavior, trigger translation after copy
       setTimeout(() => {
@@ -99,6 +110,30 @@ function handleCopy(event) {
       }, 10);
     }
   }
+}
+
+/**
+ * Track the latest selection so sites that briefly clear it on mouseup
+ * still have a chance to translate.
+ */
+function handleSelectionChange() {
+  if (selectionTracker) {
+    selectionTracker.refresh();
+  }
+}
+
+/**
+ * Get the selected text for a trigger event.
+ * @param {string} trigger - Trigger source such as mouseup or keydown.
+ * @returns {string}
+ */
+function getSelectedTextForTrigger(trigger) {
+  if (!selectionTracker) {
+    return SmartTranslatorSelection.getCurrentSelectionText(document);
+  }
+
+  const allowCache = trigger === 'mouseup' || trigger === 'copy';
+  return selectionTracker.getText({ allowCache: allowCache });
 }
 
 /**
@@ -143,13 +178,21 @@ function showTranslationDiv(content, event) {
   // Create translation result div
   translationDiv = document.createElement('div');
   translationDiv.className = 'chrome-translator-result';
-  translationDiv.innerHTML = `
-    <div class="chrome-translator-header">
-      <span>翻译结果</span>
-      <span class="chrome-translator-close">×</span>
-    </div>
-    <div class="chrome-translator-content">${content}</div>
-  `;
+  const header = document.createElement('div');
+  header.className = 'chrome-translator-header';
+  const title = document.createElement('span');
+  title.textContent = '翻译结果';
+  const closeButton = document.createElement('span');
+  closeButton.className = 'chrome-translator-close';
+  closeButton.textContent = '×';
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'chrome-translator-content';
+  contentDiv.textContent = content;
+
+  header.appendChild(title);
+  header.appendChild(closeButton);
+  translationDiv.appendChild(header);
+  translationDiv.appendChild(contentDiv);
   
   // Set styles
   const style = document.createElement('style');
@@ -190,7 +233,7 @@ function showTranslationDiv(content, event) {
   document.head.appendChild(style);
   
   // Add close button event
-  translationDiv.querySelector('.chrome-translator-close').addEventListener('click', removeTranslationDiv);
+  closeButton.addEventListener('click', removeTranslationDiv);
   
   // Add to page
   document.body.appendChild(translationDiv);
@@ -274,19 +317,48 @@ function isPDF() {
   return document.querySelector('embed[type="application/pdf"]') !== null;
 }
 
-// Handle initialization for PDF documents
-if (isPDF()) {
-  // Wait for PDF viewer to load
-  const checkPDFViewer = setInterval(() => {
-    const pdfViewer = document.querySelector('.textLayer');
-    if (pdfViewer) {
-      clearInterval(checkPDFViewer);
-      // Initialize translation functionality when PDF is loaded
-      initialize();
+/**
+ * Initialize as soon as the page looks ready enough for translation events.
+ * On PDF-heavy pages we watch for the text layer and also fall back after a short delay.
+ */
+function initializeWhenReady() {
+  if (!isPDF()) {
+    initialize();
+    return;
+  }
+
+  let resolved = false;
+  const finish = () => {
+    if (resolved) {
+      return;
     }
-  }, 1000);
-} else {
-  // Initialize immediately for regular web pages
-  initialize();
+
+    resolved = true;
+    observer.disconnect();
+    clearTimeout(fallbackTimer);
+    initialize();
+  };
+
+  const observer = new MutationObserver(() => {
+    if (document.querySelector('.textLayer')) {
+      finish();
+    }
+  });
+
+  observer.observe(document.documentElement || document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  const fallbackTimer = setTimeout(() => {
+    finish();
+  }, 3000);
+
+  if (document.querySelector('.textLayer')) {
+    finish();
+  }
 }
+
+// Initialize immediately for regular pages, and with a short readiness wait for PDFs.
+initializeWhenReady();
 

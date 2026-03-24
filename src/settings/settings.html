@@ -82,7 +82,6 @@
             <option value="openai">OpenRouter</option>
             <option value="deepseek">DeepSeek</option>
             <option value="gemini">Gemini</option>
-            <option value="custom">自定义API</option>
           </select>
         </label>
 
@@ -98,7 +97,11 @@
             <h3>Bing翻译设置</h3>
             <label>
               <span>API密钥:</span>
-              <input type="text" id="bing-api-key" placeholder="输入您的Bing翻译API密钥">
+              <input type="password" id="bing-api-key" placeholder="留空则保持已保存的密钥">
+            </label>
+            <label style="margin-top: 10px;">
+              <span>API基址:</span>
+              <input type="text" id="bing-base-url" placeholder="https://api.cognitive.microsofttranslator.com">
             </label>
             <div class="description">
               <p>如何获取Bing翻译API密钥:</p>
@@ -110,7 +113,7 @@
                 <li>在资源管理页面获取API密钥</li>
               </ol>
             </div>
-            <button class="test-api-btn" data-api="bing">测试API</button>
+            <button type="button" class="test-api-btn" data-api="bing">测试API</button>
 
           </div>
 
@@ -119,7 +122,11 @@
             <h3>DeepL翻译设置</h3>
             <label>
               <span>API密钥:</span>
-              <input type="text" id="deepl-api-key" placeholder="输入您的DeepL API密钥">
+              <input type="password" id="deepl-api-key" placeholder="留空则保持已保存的密钥">
+            </label>
+            <label style="margin-top: 10px;">
+              <span>API基址:</span>
+              <input type="text" id="deepl-base-url" placeholder="https://api-free.deepl.com/v2">
             </label>
             <div class="description">
               <p>如何获取DeepL API密钥:</p>
@@ -130,7 +137,7 @@
                 <li>在账户设置中获取API密钥</li>
               </ol>
             </div>
-            <button class="test-api-btn" data-api="deepl">测试API</button>
+            <button type="button" class="test-api-btn" data-api="deepl">测试API</button>
           </div>
 
           <!-- OpenAI API设置 -->
@@ -139,7 +146,7 @@
             <h3>OpenRouter 设置</h3>
             <label>
               <span>API密钥:</span>
-              <input type="text" id="openai-api-key" placeholder="输入您的OpenAI API密钥">
+              <input type="password" id="openai-api-key" placeholder="留空则保持已保存的密钥">
             </label>
             <label style="margin-top: 10px;">
               <span>模型:</span>
@@ -150,6 +157,10 @@
               </select> -->
               <input type="text" id="openai-model" value="">
             </label>
+            <label style="margin-top: 10px;">
+              <span>API基址:</span>
+              <input type="text" id="openai-base-url" placeholder="https://openrouter.ai/api/v1">
+            </label>
             <div class="description">
               <p>如何获取OpenRouter API密钥:</p>
               <ol>
@@ -158,7 +169,7 @@
                 <li>在个人设置中创建API密钥</li>
               </ol>
             </div>
-            <button class="test-api-btn" data-api="openai">测试API</button>
+            <button type="button" class="test-api-btn" data-api="openai">测试API</button>
           </div>
 
           <!-- DeepSeek API设置 -->
@@ -166,7 +177,7 @@
             <h3>DeepSeek翻译设置</h3>
             <label>
               <span>API密钥:</span>
-              <input type="text" id="deepseek-api-key" placeholder="输入您的DeepSeek API密钥">
+              <input type="password" id="deepseek-api-key" placeholder="留空则保持已保存的密钥">
             </label>
             <label style="margin-top: 10px;">
               <span>模型:</span>
@@ -174,6 +185,10 @@
                 <option value="deepseek-chat">DeepSeek Chat</option>
                 <option value="deepseek-coder">DeepSeek Coder</option>
               </select>
+            </label>
+            <label style="margin-top: 10px;">
+              <span>API基址:</span>
+              <input type="text" id="deepseek-base-url" placeholder="https://api.deepseek.com/v1">
             </label>
             <div class="description">
               <p>如何获取DeepSeek API密钥:</p>
@@ -183,7 +198,7 @@
                 <li>在账户设置中创建API密钥</li>
               </ol>
             </div>
-            <button class="test-api-btn" data-api="deepseek">测试API</button>
+            <button type="button" class="test-api-btn" data-api="deepseek">测试API</button>
           </div>
 
           <!-- Gemini API设置 -->
@@ -191,7 +206,7 @@
             <h3>Gemini翻译设置</h3>
             <label>
               <span>API密钥:</span>
-              <input type="text" id="gemini-api-key" placeholder="输入您的Google AI Studio API密钥">
+              <input type="password" id="gemini-api-key" placeholder="留空则保持已保存的密钥">
             </label>
             <label style="margin-top: 10px;">
               <span>模型:</span>
@@ -208,20 +223,21 @@
                 <li>创建新的API密钥</li>
               </ol>
             </div>
-            <button class="test-api-btn" data-api="gemini">测试API</button>
+            <button type="button" class="test-api-btn" data-api="gemini">测试API</button>
           </div>
 
           <!-- 自定义API设置 -->
           <!-- 在API设置部分添加 -->
           <div id="custom-settings" class="api-setting">
             <h3>自定义API设置</h3>
+            <p class="description">先在顶部下拉框选择某个自定义 API，再用下面的按钮逐个测试每个卡片。</p>
 
             <div id="custom-apis-container">
               <!-- 这里将动态生成自定义API设置表单 -->
             </div>
-            <button class="test-api-btn" data-api="custom">测试API</button>
+            <button type="button" class="test-api-btn" id="test-active-custom-api">测试当前选择</button>
 
-            <button id="add-api-btn" class="secondary-btn" style="margin-top: 15px;">
+            <button type="button" id="add-api-btn" class="secondary-btn" style="margin-top: 15px;">
               <span>+ 添加新API</span>
             </button>
           </div>
@@ -263,15 +279,16 @@
     </div>
 
     <div class="footer">
-      <button id="reset-btn">恢复默认设置</button>
-      <button id="save-btn">保存设置</button>
+      <button type="button" id="reset-btn">恢复默认设置</button>
+      <button type="button" id="save-btn">保存设置</button>
     </div>
   </div>
 
   <!-- 特殊网站设置部分 -->
   
 
-  <script src="settings.js"></script>
+  <script src="../shared/translation-api.js"></script>
+  <script src="settings-app.js"></script>
 </body>
 
 </html>
